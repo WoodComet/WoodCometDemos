@@ -1,0 +1,3 @@
+BuildPath: [UnityEngine.Application.dataPath]/maps/ + whatthismodiscalled
+
+LoadPath {UnityEngine.Application.dataPath}/maps/ + whatthismodiscalled/
