@@ -3,16 +3,14 @@ LoadPath {UnityEngine.Application.dataPath}/maps/ + whatthismodiscalled/
 
 ###################################################################################
 
-UPDATED BY GANN4LIFE 21/12/2023
+UPDATED BY GANN4LIFE 22/12/2023
 
 I have modified the paths of addressable profiles to be like this now:
-Local.BuildPath: [UnityEngine.Application.dataPath]/Mods/_YourMod/[BuildTarget]
-Local.LocalPath: {UnityEngine.Application.dataPath}/Mods/_YourMod/[BuildTarget]
+Local.BuildPath: [UnityEngine.Application.dataPath]/Mods/MOD_NAME/[BuildTarget]
+Local.LocalPath: {UnityEngine.Application.dataPath}/Mods/MOD_NAME/[BuildTarget]
 
-Note:
-Feel free to rename _YourMod to whatever you want, by either modifying the addressables profile or renaming after 
-the build has been done. I prefer to rename after the build.
-ADVICE: Rename them inside the unity editor; the game will search for the .meta files too so keep that in mind when building.
-If you're having errors when loading a mod, try to load it without renaming and try again.
+It is important now to keep {MOD_NAME} in the profiles since this is the way I found to load bundles properly.
+You can rename the folder to whatever you want, this data is only important to keep inside the catalog (json) file.
+The reason is that, when loading a mod, it searches for the {MOD_NAME} tag and replaces that string by the actual mod name.
 
 ###################################################################################

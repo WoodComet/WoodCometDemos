@@ -30,7 +30,7 @@ namespace WoodCometDemos.BetterModSupport
         [Tooltip("The folder name to look for mods, the project will also try to search for this folder into the <gamename>_Data folder.\nMake sure the folder is also found in the Addressables profile settings.")]
         [SerializeField] private string modRootFolderName = "Mods";
         
-        [Header("Label to export")]
+        [Header("Label to load")]
         [SerializeField] private AssetLabelReference findByLabel;
         
         [Header("UI Elements")]
@@ -48,7 +48,7 @@ namespace WoodCometDemos.BetterModSupport
 
         private ModInfo _selectedMod;
         private List<ModInfo> _installedModList = new List<ModInfo>();
-        private string ModsRootDirectory => Path.Combine(Application.dataPath, modRootFolderName);
+        public string ModsRootDirectory => Path.Combine(Application.dataPath, modRootFolderName);
 
         /// <summary>
         /// Stores a mod to load it/spawn it later. Ideal to use with UI buttons.
@@ -96,7 +96,15 @@ namespace WoodCometDemos.BetterModSupport
             files.ForEach(i =>
             {
                 // Iterate over each json file and store its data using the ModInfo class.
-                _installedModList.Add(new ModInfo(i));
+                _installedModList.Add(
+                    new ModInfo(FormatPathAccordingly(i)
+                    ));
+            });
+            
+            // Replace all {MOD_NAME} strings in the catalog file to match the mod's name.
+            _installedModList.ForEach(mod =>
+            {
+                mod.FixBundlePathsInModFile();
             });
             
             DisplayInstalledModsOnUI();
@@ -120,19 +128,19 @@ namespace WoodCometDemos.BetterModSupport
         /// <param name="obj"></param>
         private void OnCompleted(AsyncOperationHandle<IResourceLocator> obj)
         {
+
             //find prefabs in the addressable with the tag specified in the first parameter
             IResourceLocator resourceLocator = obj.Result;
             resourceLocator.Locate(findByLabel.labelString, typeof(GameObject), out IList<IResourceLocation> locations);
-            
+
             //if there are loactions in the adressable spawn them
             if (locations != null)
             {
                 foreach (IResourceLocation resourceLocation in locations)
                 {
-                    GameObject resourceLocationData = (GameObject)resourceLocation.Data;               
-                    AsyncOperationHandle<GameObject> prefab = Addressables.InstantiateAsync(resourceLocation);
+                    GameObject resourceLocationData = (GameObject)resourceLocation.Data;
 
-                    //do this when the object is spawned
+                    AsyncOperationHandle<GameObject> prefab = Addressables.InstantiateAsync(resourceLocation);                        
                     prefab.Completed += OnModInstantiated;
                 }
             }
@@ -174,6 +182,16 @@ namespace WoodCometDemos.BetterModSupport
             }
 
             return jsonFiles;
+        }
+
+        /// <summary>
+        /// Replaces backslashes by forward slashes.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string FormatPathAccordingly(string path)
+        {
+            return path.Replace(@"\", "/");
         }
     }
 }

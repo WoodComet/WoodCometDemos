@@ -52,5 +52,24 @@ namespace WoodCometDemos.BetterModSupport
 
             return desc;
         }
+
+        /// <summary>
+        /// Replaces all insatnces of MOD_NAME found in the catalog file by the actual mod name so it finds the bundle files accordingly.
+        /// </summary>
+        public void FixBundlePathsInModFile()
+        {
+            // Read content
+            StreamReader reader = new StreamReader(ModFile);
+            string contentCatalog = reader.ReadToEnd();
+            reader.Close();
+
+            // Replace and cache data
+            contentCatalog = contentCatalog.Replace("MOD_NAME", GetModName());
+            
+            // Write back to the mod file
+            StreamWriter writer = new StreamWriter(ModFile);
+            writer.Write(contentCatalog);
+            writer.Close();
+        }
     }
 }
