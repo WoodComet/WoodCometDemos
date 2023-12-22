@@ -36,21 +36,28 @@ namespace WoodCometDemos.BetterModSupport
         
         public string GetModPlatform => Directory.GetParent(ModFile).Name;
         public string GetModName() => Directory.GetParent(ModFile).Parent.Name;
+        public string GetModThumbnailPath() => Path.Combine(RootPath, "thumbnail.png");
+        public Texture2D GetModThumbnainTexture()
+        {
+            if (!HasThumbnail())
+                return null;
+                
+            byte[] bytes = File.ReadAllBytes(GetModThumbnailPath());
+            Texture2D texture = new Texture2D(1, 1);
+            texture.LoadImage(bytes);
+            return texture;
+        }
+        
+        public bool HasThumbnail() => File.Exists(GetModThumbnailPath());
 
         public string GetModDescription()
         {
-            string desc = "No description provided.";
+            string descriptionFilePath = Path.Combine(RootPath, "description.txt");
             
-            try
-            {
-                desc = File.ReadLines(Path.Combine(RootPath, "description.txt")).First();
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.LogError("There is no description file for this mod, `description.txt` was not found in " + RootPath);
-            }
-
-            return desc;
+            if(File.Exists(descriptionFilePath))
+                return File.ReadLines(Path.Combine(RootPath, "description.txt")).First();
+            
+            return "No description provided.";
         }
 
         /// <summary>
